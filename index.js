@@ -19,10 +19,12 @@ app.use(bodyParser.json());
 
 app.use("/api/shorturl", (req, res, next) => {
   if (req.body.url !== undefined) {
-    dns.lookup(req.body.url, function (err, addresses, family) {
-      if (err.code === "ENOTFOUND") next();
-      else res.json({ error: "invalid url" });
-    });
+    if (req.body.url.includes("http://") || req.body.url.includes("https://")) {
+      dns.lookup(req.body.url, function (err, addresses, family) {
+        if (err.code === "ENOTFOUND") next();
+        else res.json({ error: "invalid url" });
+      });
+    } else res.json({ error: "invalid url" });
   } else next();
 });
 
